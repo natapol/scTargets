@@ -242,6 +242,6 @@ tar_sc_single_qc <- function(
       apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering)
     )
   )
-)
+}
 
 
