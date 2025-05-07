@@ -57,7 +57,7 @@ tar_sc_single_qc_step_read_10x_counts <- function(path) {
 #'   empty_lower_droplets = 100,
 #'   BPPARAM = SerialParam()
 #' )
-#' ```
+#' 
 #' @export
 tar_sc_single_qc_step_detect_empty_droplets <- function(sce_raw, empty_lower_droplets, BPPARAM) {
   DropletUtils::emptyDrops(

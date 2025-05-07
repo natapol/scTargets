@@ -41,5 +41,4 @@ result <- tar_sc_single_qc_step_detect_empty_droplets(
   empty_lower_droplets = 100,
   BPPARAM = SerialParam()
 )
-```
 }

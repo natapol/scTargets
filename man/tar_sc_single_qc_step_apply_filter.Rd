@@ -41,10 +41,10 @@ proportion of cells.
 }
 \examples{
 # Example usage:
-# filtered_sce <- tar_sc_single_qc_step_apply_filter(
-#   sce_sensitive_filter = sce1,
-#   sce_custom_filter = sce2,
-#   save_dataset_sensitive_filtering = TRUE
-# )
+filtered_sce <- tar_sc_single_qc_step_apply_filter(
+  sce_sensitive_filter = sce1,
+  sce_custom_filter = sce2,
+  save_dataset_sensitive_filtering = TRUE
+)
 
 }
