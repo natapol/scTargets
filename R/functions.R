@@ -77,7 +77,7 @@ tar_sc_single_qc <- function(
 
   # 1
   read_10x_counts <- function(path) {
-    sce_raw <- read10xCounts(path)
+    sce_raw <- DropletUtils::read10xCounts(path)
     colnames(sce_raw) <- colData(sce_raw)$Barcode
     sce_raw
   }
