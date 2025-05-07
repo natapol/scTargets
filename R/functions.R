@@ -212,7 +212,7 @@ tar_sc_single_qc <- function(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       "sce_raw", 
-      read10xCounts(path)
+      read_10x_counts(path)
     ),
     tar_target_raw(
       "empty_droplets", 
