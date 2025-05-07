@@ -212,35 +212,35 @@ tar_sc_single_qc <- function(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       "sce_raw", 
-      read_10x_counts(path)
+      quote(read_10x_counts(path))
     ),
     tar_target_raw(
       "empty_droplets", 
-      detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM)
+      quote(detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM))
     ),
     tar_target_raw(
       "sce_no_empty_drop", 
-      remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold)
+      quote(remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold))
     ),
     tar_target_raw(
       "per_cell_qc_metrics", 
-      cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM)
+      quote(cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM))
     ),
     tar_target_raw(
       "sce_unfiltered", 
-      create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered)
+      quote(create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered))
     ),
     tar_target_raw(
       "sce_sensitive_filter", 
-      make_sensitive_filter(sce_unfiltered)
+      quote(make_sensitive_filter(sce_unfiltered))
     ),
     tar_target_raw(
       "sce_custom_filter", 
-      make_custom_filter(sce_unfiltered)
+      quote(make_custom_filter(sce_unfiltered))
     ),
     tar_target_raw(
       "sce_filtered", 
-      apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering)
+      quote(apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering))
     )
   )
 }

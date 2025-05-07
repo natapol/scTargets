@@ -13,4 +13,11 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     magrittr,
-    purrr
+    purrr,
+    tidyr,
+    stringr
+Remotes:
+    bioc::DropletUtils,
+    bioc::scater,
+    bioc::scran,
+    bioc::BiocParallel
