@@ -1,75 +1,25 @@
-#' @title Single-Cell Quality Control Steps
-#' @description A collection of functions to perform quality control (QC) steps 
-#' for single-cell RNA sequencing (scRNA-seq) data. These steps include reading 
-#' 10x Genomics data, detecting and removing empty droplets, calculating per-cell 
-#' QC metrics, applying dataset-sensitive and custom filters, and preparing the 
-#' filtered single-cell experiment (SCE) object.
+#' Read 10x Genomics Count Matrix
 #'
-#' @section Functions:
-#' \describe{
-#'   \item{\code{tar_sc_single_qc_step_read_10x_counts(path)}}{
-#'     Reads 10x Genomics data from the specified path and assigns barcodes as column names.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM)}}{
-#'     Detects empty droplets using the \code{DropletUtils::emptyDrops} function.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold)}}{
-#'     Removes empty droplets based on the FDR threshold and updates the SCE object.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM)}}{
-#'     Calculates per-cell QC metrics, including mitochondrial and ribosomal gene percentages.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace)}}{
-#'     Creates an unfiltered SCE object by applying dataset-sensitive and custom filters.
-#'   }
-#'   \item{\code{tar_sc_single_qc_tep_make_sensitive_filter(sce_unfiltered)}}{
-#'     Applies dataset-sensitive filters to the unfiltered SCE object.
-#'   }
-#'   \item{\code{tar_sc_single_step_make_custom_filter(sce_unfiltered)}}{
-#'     Applies custom filters to the unfiltered SCE object.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_after_filter_rowsums(sce_filter)}}{
-#'     Computes row sums of the counts matrix for the filtered SCE object.
-#'   }
-#'   \item{\code{tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering)}}{
-#'     Applies the selected filter (dataset-sensitive or custom) and removes genes 
-#'     with low expression across cells.
-#'   }
+#' This function reads a 10x Genomics count matrix from the specified path and
+#' returns a SingleCellExperiment object. The column names of the resulting
+#' object are set to the barcodes from the cell metadata.
+#'
+#' @param path A string specifying the path to the 10x Genomics data directory.
+#'             This directory should contain the matrix, features, and barcodes files.
+#'
+#' @return A \code{SingleCellExperiment} object containing the count matrix
+#'         and associated metadata.
+#'
+#' @importFrom DropletUtils read10xCounts
+#' @importFrom SingleCellExperiment colData
+#'
+#' @examples
+#' \dontrun{
+#'   # Example usage:
+#'   sce <- tar_sc_single_qc_step_read_10x_counts("path/to/10x/data")
 #' }
 #'
-#' @param path Character. Path to the 10x Genomics data directory.
-#' @param sce_raw SingleCellExperiment. The raw SCE object.
-#' @param empty_lower_droplets Numeric. Lower threshold for detecting empty droplets.
-#' @param BPPARAM BiocParallelParam. Parallelization parameters.
-#' @param empty_droplets DataFrame. Results from \code{DropletUtils::emptyDrops}.
-#' @param empty_droplets_fdr_threshold Numeric. FDR threshold for identifying cells.
-#' @param sce_no_empty_drop SingleCellExperiment. SCE object after removing empty droplets.
-#' @param per_cell_qc_metrics DataFrame. Per-cell QC metrics.
-#' @param replace Logical. Whether to replace existing columns in \code{colData}.
-#' @param sce_unfiltered SingleCellExperiment. Unfiltered SCE object.
-#' @param sce_filter SingleCellExperiment. Filtered SCE object.
-#' @param sce_sensitive_filter SingleCellExperiment. SCE object after dataset-sensitive filtering.
-#' @param sce_custom_filter SingleCellExperiment. SCE object after custom filtering.
-#' @param save_dataset_sensitive_filtering Logical. Whether to save dataset-sensitive filtering.
-#' @param min_umi Numeric. Minimum UMI count for gene filtering.
-#' @param min_ratio_cells Numeric. Minimum ratio of cells expressing a gene for it to be retained.
-#'
-#' @return Various outputs depending on the function, including SCE objects, QC metrics, 
-#' and filtered data.
-#' 
-#' @examples
-#' # Example usage of the functions:
-#' sce_raw <- tar_sc_single_qc_step_read_10x_counts("path/to/data")
-#' empty_droplets <- tar_sc_single_qc_step_detect_empty_droplets(sce_raw, 100, BPPARAM = BiocParallel::SerialParam())
-#' sce_no_empty_drop <- tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, 0.01)
-#' per_cell_qc_metrics <- tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM = BiocParallel::SerialParam())
-#' sce_unfiltered <- tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace = TRUE)
-#' sce_sensitive_filter <- tar_sc_single_qc_tep_make_sensitive_filter(sce_unfiltered)
-#' sce_custom_filter <- tar_sc_single_step_make_custom_filter(sce_unfiltered)
-#' filtered_counts <- tar_sc_single_qc_step_after_filter_rowsums(sce_sensitive_filter)
-#' sce_final <- tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering = TRUE)
-
-# 1
+#' @export
 tar_sc_single_qc_step_read_10x_counts <- function(path) {
   sce_raw <- DropletUtils::read10xCounts(path)
   colnames(sce_raw) <- colData(sce_raw)$Barcode
@@ -77,13 +27,77 @@ tar_sc_single_qc_step_read_10x_counts <- function(path) {
 }
 
 # 2
+#' Detect Empty Droplets in Single-Cell Experiment Data
+#'
+#' This function identifies empty droplets in single-cell experiment data using the `DropletUtils::emptyDrops` method.
+#'
+#' @param sce_raw A `SingleCellExperiment` object containing raw count data.
+#' @param empty_lower_droplets An integer specifying the lower bound for the total UMI count to consider a droplet as potentially empty.
+#' @param BPPARAM A `BiocParallelParam` object specifying the parallelization parameters for computation.
+#'
+#' @return A `DataFrame` object with the results of the empty droplet detection, including p-values and other statistics.
+#'
+#' @details This function applies the `emptyDrops` method from the `DropletUtils` package to identify droplets that are likely to be empty based on their UMI counts. The `lower` parameter sets the threshold for the minimum UMI count to consider a droplet for testing.
+#'
+#' @importFrom DropletUtils emptyDrops
+#' @importFrom SummarizedExperiment counts
+#'
+#' @examples
+#' # Example usage:
+#' library(SingleCellExperiment)
+#' library(DropletUtils)
+#' library(BiocParallel)
+#'
+#' # Create a mock SingleCellExperiment object
+#' sce_raw <- SingleCellExperiment(assays = list(counts = matrix(rpois(100, lambda = 1), ncol = 10)))
+#'
+#' # Detect empty droplets
+#' result <- tar_sc_single_qc_step_detect_empty_droplets(
+#'   sce_raw = sce_raw,
+#'   empty_lower_droplets = 100,
+#'   BPPARAM = SerialParam()
+#' )
+#' ```
+#' @export
 tar_sc_single_qc_step_detect_empty_droplets <- function(sce_raw, empty_lower_droplets, BPPARAM) {
   DropletUtils::emptyDrops(
     m = counts(sce_raw), lower = empty_lower_droplets, BPPARAM = BPPARAM
   )
 }
 
-# 3
+#' Remove Empty Droplets Based on FDR Threshold
+#'
+#' This function filters out empty droplets from a SingleCellExperiment (SCE) object
+#' based on a specified false discovery rate (FDR) threshold. It also adds an 
+#' `is_empty_fdr` column to the SCE object to indicate the FDR values for the retained cells.
+#'
+#' @param sce_raw A `SingleCellExperiment` object containing raw single-cell data. 
+#'   Must have non-zero columns.
+#' @param empty_droplets A data frame containing information about droplets, 
+#'   including their FDR values. Can be `NULL` if no empty droplet information is available.
+#' @param empty_droplets_fdr_threshold A numeric value specifying the FDR threshold 
+#'   for identifying cells. Droplets with FDR values less than or equal to this 
+#'   threshold are retained.
+#'
+#' @return A `SingleCellExperiment` object with empty droplets removed and an 
+#'   additional `is_empty_fdr` column indicating the FDR values for the retained cells.
+#'
+#' @details
+#' - If `empty_droplets` is `NULL`, the function adds an `is_empty_fdr` column 
+#'   with `NA` values to the SCE object.
+#' - If `empty_droplets` is provided, the function filters the SCE object to 
+#'   retain only the cells with FDR values less than or equal to the specified threshold.
+#' - The function ensures that the input `sce_raw` has at least one column.
+#'
+#' @examples
+#' # Example usage:
+#' sce_filtered <- tar_sc_single_qc_step_remove_empty_drop(
+#'   sce_raw = sce_object,
+#'   empty_droplets = droplet_data,
+#'   empty_droplets_fdr_threshold = 0.01
+#' )
+#'
+#' @export
 tar_sc_single_qc_step_remove_empty_drop <- function(sce_raw, empty_droplets, empty_droplets_fdr_threshold) {
 
   stopifnot(
@@ -101,7 +115,25 @@ tar_sc_single_qc_step_remove_empty_drop <- function(sce_raw, empty_droplets, emp
   sce_raw
 }
 
-# 4
+#' Calculate Per-Cell QC Metrics
+#'
+#' This function calculates per-cell quality control (QC) metrics for a SingleCellExperiment object.
+#' It identifies mitochondrial and ribosomal genes based on their symbols and computes QC metrics
+#' using the `scater::perCellQCMetrics` function.
+#'
+#' @param sce_no_empty_drop A `SingleCellExperiment` object that has been filtered to remove empty droplets.
+#' @param BPPARAM A `BiocParallelParam` object specifying the parallelization backend to use.
+#'
+#' @return A `DataFrame` containing per-cell QC metrics, including metrics for mitochondrial and ribosomal subsets.
+#'
+#' @details
+#' - Mitochondrial genes are identified using a case-insensitive regex match for "MT-".
+#' - Ribosomal genes are identified using a case-insensitive regex match for "^RP[SL]".
+#' - The `BPPARAM` parameter allows for parallel computation of QC metrics.
+#'
+#' @importFrom stringr str_which regex
+#' @importFrom scater perCellQCMetrics
+#' @export
 tar_sc_single_qc_step_cal_per_cell_qc_metrics <- function(sce_no_empty_drop, BPPARAM) {
   mito_genes <- stringr::str_which(rowData(sce_no_empty_drop)[["Symbol"]], stringr::regex("MT-", ignore_case = TRUE))
   ribo_genes <- stringr::str_which(rowData(sce_no_empty_drop)[["Symbol"]], stringr::regex("^RP[SL]", ignore_case = TRUE))
@@ -113,7 +145,48 @@ tar_sc_single_qc_step_cal_per_cell_qc_metrics <- function(sce_no_empty_drop, BPP
   )
 }
 
-# 5
+#' Create an Unfiltered SingleCellExperiment Object with QC Metrics
+#'
+#' This function applies dataset-sensitive and custom cell filtering criteria 
+#' to a SingleCellExperiment (SCE) object and appends the filtering results 
+#' as metadata columns. The function is designed to handle quality control (QC) 
+#' metrics and allows for the replacement of existing metadata columns if specified.
+#'
+#' @param sce_no_empty_drop A `SingleCellExperiment` object containing the input data 
+#'   without empty droplets.
+#' @param per_cell_qc_metrics A `data.frame` containing per-cell quality control metrics. 
+#'   Expected columns include `total`, `detected`, and `subsets_mito_percent`.
+#' @param replace A logical value indicating whether to replace existing metadata 
+#'   columns in the SCE object if they overlap with the new QC metrics. Default is `FALSE`.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. **Dataset-sensitive cell filtering**: Identifies outliers based on library size, 
+#'    number of detected features, and mitochondrial content using the Median Absolute 
+#'    Deviation (MAD) method.
+#' 2. **Custom cell filtering**: Applies user-defined thresholds for library size, 
+#'    number of detected features, and mitochondrial content.
+#' 3. Combines the results of the dataset-sensitive and custom filters using logical 
+#'    AND operations.
+#' 4. Appends the filtering results as new metadata columns (`discard_qc` and 
+#'    `discard_custom`) to the SCE object.
+#'
+#' @return A `SingleCellExperiment` object with updated metadata columns containing 
+#'   the QC filtering results.
+#'
+#' @examples
+#' # Example usage:
+#' sce <- tar_sc_single_qc_step_create_unfiltered_sce(
+#'   sce_no_empty_drop = sce_object,
+#'   per_cell_qc_metrics = qc_metrics,
+#'   replace = TRUE
+#' )
+#'
+#' @importFrom scater isOutlier
+#' @importFrom purrr map reduce
+#' @importFrom tidyr replace_na
+#' @importFrom SingleCellExperiment colData
+#' @export
 tar_sc_single_qc_step_create_unfiltered_sce <- function(sce_no_empty_drop, per_cell_qc_metrics, replace) {
   # ### Dataset-sensitive cell filtering ##########################################
   # MAD_THRESHOLD: 3
@@ -167,24 +240,102 @@ tar_sc_single_qc_step_create_unfiltered_sce <- function(sce_no_empty_drop, per_c
   sce_no_empty_drop
 }
 
-# 6
+#' Apply Sensitive Filtering to Single-Cell Experiment
+#'
+#' This function filters a SingleCellExperiment object by removing cells 
+#' marked for discard based on a quality control (QC) metric.
+#'
+#' @param sce_unfiltered A `SingleCellExperiment` object containing unfiltered 
+#'   single-cell data. The object must include a logical column `discard_qc` 
+#'   in its metadata indicating cells to be discarded.
+#'
+#' @return A filtered `SingleCellExperiment` object containing only the cells 
+#'   that are not marked for discard (`discard_qc == FALSE`).
+#'
+#' @examples
+#' # Assuming `sce` is a SingleCellExperiment object with a `discard_qc` column:
+#' filtered_sce <- tar_sc_single_qc_tep_make_sensitive_filter(sce)
+#'
+#' @export
 tar_sc_single_qc_tep_make_sensitive_filter <- function(sce_unfiltered) {
   sce_unfiltered[, !sce_unfiltered$discard_qc]
 }
 
-# 7
+#' Apply Custom Filtering to SingleCellExperiment Object
+#'
+#' This function filters a SingleCellExperiment object by removing cells 
+#' that are marked for discarding based on a custom filter.
+#'
+#' @param sce_unfiltered A SingleCellExperiment object containing unfiltered data. 
+#'   The object must have a logical column `discard_custom` in its colData, 
+#'   where `TRUE` indicates cells to be discarded.
+#'
+#' @return A SingleCellExperiment object with cells that are not marked 
+#'   for discarding based on the `discard_custom` column.
+#'
+#' @examples
+#' # Assuming `sce` is a SingleCellExperiment object with a `discard_custom` column:
+#' filtered_sce <- tar_sc_single_step_make_custom_filter(sce)
+#'
+#' @export
 tar_sc_single_step_make_custom_filter <- function(sce_unfiltered) {
   sce_unfiltered[, !sce_unfiltered$discard_custom]
 }
 
-# 8
+#' Perform Quality Control Step After Filtering Rowsums
+#'
+#' This function calculates the row sums of the counts matrix from a 
+#' SingleCellExperiment object after filtering.
+#'
+#' @param sce_filter A `SingleCellExperiment` object that has been filtered.
+#' 
+#' @return A numeric vector containing the row sums of the counts matrix.
+#'
+#' @examples
+#' # Assuming `sce_filtered` is a filtered SingleCellExperiment object:
+#' row_sums <- tar_sc_single_qc_step_after_filter_rowsums(sce_filtered)
+#'
+#' @importFrom SingleCellExperiment counts
+#' @export
 tar_sc_single_qc_step_after_filter_rowsums <- function(sce_filter) {
   sce_filtered %>% 
     counts() %>% 
     rowSums()
 }
 
-# 9
+#' Apply Filtering to Single-Cell Experiment Object
+#'
+#' This function applies gene filtering to a SingleCellExperiment (SCE) object 
+#' based on either a sensitive filtering approach or a custom filtering approach. 
+#' The filtering removes genes that do not meet the minimum expression threshold 
+#' across a specified proportion of cells.
+#'
+#' @param sce_sensitive_filter A SingleCellExperiment object to be used for 
+#'   sensitive filtering.
+#' @param sce_custom_filter A SingleCellExperiment object to be used for 
+#'   custom filtering.
+#' @param save_dataset_sensitive_filtering A logical value indicating whether 
+#'   to use the sensitive filtering dataset (`TRUE`) or the custom filtering 
+#'   dataset (`FALSE`).
+#'
+#' @return A filtered SingleCellExperiment object with genes that meet the 
+#'   minimum expression threshold retained.
+#'
+#' @details The function filters genes based on two criteria:
+#'   - A gene must have at least `min_umi` counts in at least `min_ratio_cells` 
+#'     proportion of cells.
+#'   - Genes that do not meet this criterion are removed from the dataset.
+#'
+#' @examples
+#' # Example usage:
+#' # filtered_sce <- tar_sc_single_qc_step_apply_filter(
+#' #   sce_sensitive_filter = sce1,
+#' #   sce_custom_filter = sce2,
+#' #   save_dataset_sensitive_filtering = TRUE
+#' # )
+#'
+#' @importFrom SingleCellExperiment counts
+#' @export
 tar_sc_single_qc_step_apply_filter <- function(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering) {
 
   min_umi <- 1
