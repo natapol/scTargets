@@ -63,6 +63,7 @@
 #' @export
 
 tar_sc_single_qc <- function(
+  name,
   x10_file_path,
   empty_droplets_fdr_threshold = 0.01,
   empty_lower_droplets = TRUE,
@@ -208,37 +209,37 @@ tar_sc_single_qc <- function(
   }
 
   list(
-    tar_target_raw(path, x10_file_path, format = "file"),
+    tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
-      sce_raw, 
+      "sce_raw", 
       read10xCounts(path)
     ),
     tar_target_raw(
-      empty_droplets, 
+      "empty_droplets", 
       detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM)
     ),
     tar_target_raw(
-      sce_no_empty_drop, 
+      "sce_no_empty_drop", 
       remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold)
     ),
     tar_target_raw(
-      per_cell_qc_metrics, 
+      "per_cell_qc_metrics", 
       cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM)
     ),
     tar_target_raw(
-      sce_unfiltered, 
+      "sce_unfiltered", 
       create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered)
     ),
     tar_target_raw(
-      sce_sensitive_filter, 
+      "sce_sensitive_filter", 
       make_sensitive_filter(sce_unfiltered)
     ),
     tar_target_raw(
-      sce_custom_filter, 
+      "sce_custom_filter", 
       make_custom_filter(sce_unfiltered)
     ),
     tar_target_raw(
-      sce_filtered, 
+      "sce_filtered", 
       apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering)
     )
   )
