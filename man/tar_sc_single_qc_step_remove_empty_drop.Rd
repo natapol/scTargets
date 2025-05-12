@@ -2,7 +2,7 @@
 % Please edit documentation in R/tar_sc_single_qc_steps.R
 \name{tar_sc_single_qc_step_remove_empty_drop}
 \alias{tar_sc_single_qc_step_remove_empty_drop}
-\title{Remove Empty Droplets Based on FDR Threshold}
+\title{Read 10x Genomics Count Matrix}
 \usage{
 tar_sc_single_qc_step_remove_empty_drop(
   sce_raw,
@@ -20,17 +20,31 @@ including their FDR values. Can be \code{NULL} if no empty droplet information i
 \item{empty_droplets_fdr_threshold}{A numeric value specifying the FDR threshold
 for identifying cells. Droplets with FDR values less than or equal to this
 threshold are retained.}
+
+\item{path}{A string specifying the path to the 10x Genomics data directory.
+This directory should contain the matrix, features, and barcodes files.}
+
+\item{empty_lower_droplets}{An integer specifying the lower bound for the total UMI count to consider a droplet as potentially empty.}
+
+\item{BPPARAM}{A \code{BiocParallelParam} object specifying the parallelization parameters for computation.}
 }
 \value{
+A \code{SingleCellExperiment} object containing the count matrix
+and associated metadata.
+
+A \code{DataFrame} object with the results of the empty droplet detection, including p-values and other statistics.
+
 A \code{SingleCellExperiment} object with empty droplets removed and an
 additional \code{is_empty_fdr} column indicating the FDR values for the retained cells.
 }
 \description{
-This function filters out empty droplets from a SingleCellExperiment (SCE) object
-based on a specified false discovery rate (FDR) threshold. It also adds an
-\code{is_empty_fdr} column to the SCE object to indicate the FDR values for the retained cells.
+This function reads a 10x Genomics count matrix from the specified path and
+returns a SingleCellExperiment object. The column names of the resulting
+object are set to the barcodes from the cell metadata.
 }
 \details{
+This function applies the \code{emptyDrops} method from the \code{DropletUtils} package to identify droplets that are likely to be empty based on their UMI counts. The \code{lower} parameter sets the threshold for the minimum UMI count to consider a droplet for testing.
+
 \itemize{
 \item If \code{empty_droplets} is \code{NULL}, the function adds an \code{is_empty_fdr} column
 with \code{NA} values to the SCE object.
@@ -40,6 +54,26 @@ retain only the cells with FDR values less than or equal to the specified thresh
 }
 }
 \examples{
+\dontrun{
+  # Example usage:
+  sce <- tar_sc_single_qc_step_read_10x_counts("path/to/10x/data")
+}
+
+# Example usage:
+library(SingleCellExperiment)
+library(DropletUtils)
+library(BiocParallel)
+
+# Create a mock SingleCellExperiment object
+sce_raw <- SingleCellExperiment(assays = list(counts = matrix(rpois(100, lambda = 1), ncol = 10)))
+
+# Detect empty droplets
+result <- tar_sc_single_qc_step_detect_empty_droplets(
+  sce_raw = sce_raw,
+  empty_lower_droplets = 100,
+  BPPARAM = SerialParam()
+)
+
 # Example usage:
 sce_filtered <- tar_sc_single_qc_step_remove_empty_drop(
   sce_raw = sce_object,
