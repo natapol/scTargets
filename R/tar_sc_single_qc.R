@@ -101,7 +101,7 @@ tar_sc_single_qc <- function(
     ),
     tar_target_raw(
       "empty_droplets", 
-      tar_sc_single_qc_step_detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM)
+      tar_sc_single_qc_step_detect_empty_droplets
     )
     # tar_target_raw(
     #   "sce_no_empty_drop", 
