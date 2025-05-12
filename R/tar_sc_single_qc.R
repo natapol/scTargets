@@ -74,41 +74,59 @@ tar_sc_single_qc <- function(
 
   targets::tar_assert_path(x10_file_path, 'Input path for 10x data was not found.')
 
+  tar_sc_single_qc_step_read_10x_counts <- function(path) {
+    sce_raw <- DropletUtils::read10xCounts(path)
+    colnames(sce_raw) <- colData(sce_raw)$Barcode
+    sce_raw
+  }
+
+  tar_sc_single_qc_step_detect_empty_droplets <- substitute(
+    function(sce_raw, empty_lower_droplets, BPPARAM) {
+      DropletUtils::emptyDrops(
+        m = counts(sce_raw), lower = empty_lower_droplets, BPPARAM = BPPARAM
+      )
+    },
+    list(
+      empty_lower_droplets = empty_lower_droplets,
+      BPPARAM = BPPARAM
+    )
+  )
+
 
   list(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       "sce_raw", 
-      quote(scTargets::tar_sc_single_qc_step_read_10x_counts(path))
+      quote(tar_sc_single_qc_step_read_10x_counts(path))
     ),
     tar_target_raw(
       "empty_droplets", 
-      quote(scTargets::tar_sc_single_qc_step_detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM))
-    ),
-    tar_target_raw(
-      "sce_no_empty_drop", 
-      quote(scTargets::tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold))
-    ),
-    tar_target_raw(
-      "per_cell_qc_metrics", 
-      quote(scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM))
-    ),
-    tar_target_raw(
-      "sce_unfiltered", 
-      quote(scTargets::tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered))
-    ),
-    tar_target_raw(
-      "sce_sensitive_filter", 
-      quote(scTargets::tar_sc_single_qc_step_make_sensitive_filter(sce_unfiltered))
-    ),
-    tar_target_raw(
-      "sce_custom_filter", 
-      quote(scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered))
-    ),
-    tar_target_raw(
-      "sce_filtered", 
-      quote(scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering))
+      tar_sc_single_qc_step_detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM)
     )
+    # tar_target_raw(
+    #   "sce_no_empty_drop", 
+    #   quote(scTargets::tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold))
+    # ),
+    # tar_target_raw(
+    #   "per_cell_qc_metrics", 
+    #   quote(scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM))
+    # ),
+    # tar_target_raw(
+    #   "sce_unfiltered", 
+    #   quote(scTargets::tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered))
+    # ),
+    # tar_target_raw(
+    #   "sce_sensitive_filter", 
+    #   quote(scTargets::tar_sc_single_qc_step_make_sensitive_filter(sce_unfiltered))
+    # ),
+    # tar_target_raw(
+    #   "sce_custom_filter", 
+    #   quote(scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered))
+    # ),
+    # tar_target_raw(
+    #   "sce_filtered", 
+    #   quote(scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering))
+    # )
   )
 }
 
