@@ -74,11 +74,12 @@ tar_sc_single_qc <- function(
 
   targets::tar_assert_path(x10_file_path, 'Input path for 10x data was not found.')
 
-  tar_sc_single_qc_step_read_10x_counts <- function(path) {
+  tar_sc_single_qc_step_read_10x_counts <- substitute(
     sce_raw <- DropletUtils::read10xCounts(path)
     colnames(sce_raw) <- colData(sce_raw)$Barcode
     sce_raw
-  }
+  )
+
 
   tar_sc_single_qc_step_detect_empty_droplets <- substitute(
     function(sce_raw, empty_lower_droplets, BPPARAM) {
@@ -97,7 +98,7 @@ tar_sc_single_qc <- function(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       "sce_raw", 
-      quote(tar_sc_single_qc_step_read_10x_counts(path))
+      tar_sc_single_qc_step_read_10x_counts
     ),
     tar_target_raw(
       "empty_droplets", 
