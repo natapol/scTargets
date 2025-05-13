@@ -78,16 +78,16 @@ tar_sc_single_qc <- function(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       name = "sce_raw", 
-      command = quote(scTargets::tar_sc_single_qc_step_read_10x_counts)
+      command = quote(scTargets::tar_sc_single_qc_step_read_10x_counts(path))
     ),
-    tar_target_raw(
-      name = "sce_counts", 
-      command = quote(BiocGenerics::counts(sce_raw))
-    ),
+    # tar_target_raw(
+    #   name = "sce_counts", 
+    #   command = quote(BiocGenerics::counts(sce_raw))
+    # ),
     tar_target_raw(
       name = "empty_droplets", 
       command = substitute(
-        scTargets::tar_sc_single_qc_step_detect_empty_droplets(sce_counts, empty_lower_droplets, BPPARAM),
+        scTargets::tar_sc_single_qc_step_detect_empty_droplets(sce_raw, empty_lower_droplets, BPPARAM),
         env = list(empty_lower_droplets = empty_lower_droplets, BPPARAM = BPPARAM)
       )
     )
