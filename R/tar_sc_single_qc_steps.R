@@ -59,7 +59,7 @@ tar_sc_single_qc_step_read_10x_counts <- function(path) {
 #' )
 #' 
 #' @export
-tar_sc_single_qc_step_detect_empty_droplets <- function(sce_count, empty_lower_droplets, BPPARAM) {
+tar_sc_single_qc_step_detect_empty_droplets <- function(sce_raw, empty_lower_droplets, BPPARAM) {
   DropletUtils::emptyDrops(
     m = BiocGenerics::counts(sce_raw), lower = empty_lower_droplets, BPPARAM = BPPARAM
   )

@@ -80,10 +80,6 @@ tar_sc_single_qc <- function(
       name = "sce_raw", 
       command = quote(scTargets::tar_sc_single_qc_step_read_10x_counts(path))
     ),
-    # tar_target_raw(
-    #   name = "sce_counts", 
-    #   command = quote(BiocGenerics::counts(sce_raw))
-    # ),
     tar_target_raw(
       name = "empty_droplets", 
       command = substitute(
