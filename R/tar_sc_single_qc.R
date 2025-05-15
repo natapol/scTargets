@@ -93,14 +93,14 @@ tar_sc_single_qc <- function(
         scTargets::tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold),
         env = list(empty_droplets_fdr_threshold = empty_droplets_fdr_threshold)
       )
+    ),
+    tar_target_raw(
+      name = "per_cell_qc_metrics", 
+      command = substitute(
+        scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM),
+        env = list(BPPARAM = BPPARAM)
+      )
     )
-    # tar_target_raw(
-    #   name = "per_cell_qc_metrics", 
-    #   command = substitute(
-    #     scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM),
-    #     env = list(BPPARAM = BPPARAM)
-    #   )
-    # ),
     # tar_target_raw(
     #   name = "sce_unfiltered", 
     #   command = substitute(
