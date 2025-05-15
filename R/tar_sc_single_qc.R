@@ -119,14 +119,14 @@ tar_sc_single_qc <- function(
       command = quote(
         scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered)
       )
+    ),
+    tar_target_raw(
+      name = "sce_filtered", 
+      command = substitute(
+        scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering),
+        env = list(save_dataset_sensitive_filtering = save_dataset_sensitive_filtering)
+      )
     )
-    # tar_target_raw(
-    #   name = "sce_filtered", 
-    #   command = substitute(
-    #     scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering),
-    #     env = list(save_dataset_sensitive_filtering = save_dataset_sensitive_filtering)
-    #   )
-    # )
   )
 }
 
