@@ -143,7 +143,7 @@ tar_sc_single_qc_step_cal_per_cell_qc_metrics <- function(sce_no_empty_drop, BPP
   scater::perCellQCMetrics(
     sce_no_empty_drop,
     subsets = list(mito = mito_genes, ribo = ribo_genes), 
-    BPPARAM = ignore(BPPARAM)
+    BPPARAM = BPPARAM
   )
 }
 
