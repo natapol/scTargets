@@ -331,7 +331,7 @@ tar_sc_single_qc_step_apply_filter <- function(sce_sensitive_filter, sce_custom_
   num_cells <- min_ratio_cells * ncol(sce_filter)
   sce_gene_filter <- !rowSums(counts(sce_filter) >= min_umi) >= num_cells
 
-  # sce_filter[!sce_gene_filter, ]
+  sce_filter[!sce_gene_filter, ]
 }
 
 #' Perform Quality Control Step After Filtering Rowsums
