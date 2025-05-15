@@ -284,27 +284,6 @@ tar_sc_single_qc_step_make_custom_filter <- function(sce_unfiltered) {
   sce_unfiltered[, !sce_unfiltered$discard_custom]
 }
 
-#' Perform Quality Control Step After Filtering Rowsums
-#'
-#' This function calculates the row sums of the counts matrix from a 
-#' SingleCellExperiment object after filtering.
-#'
-#' @param sce_filter A `SingleCellExperiment` object that has been filtered.
-#' 
-#' @return A numeric vector containing the row sums of the counts matrix.
-#'
-#' @examples
-#' # Assuming `sce_filtered` is a filtered SingleCellExperiment object:
-#' row_sums <- tar_sc_single_qc_step_after_filter_rowsums(sce_filtered)
-#'
-#' @importFrom SingleCellExperiment counts
-#' @export
-tar_sc_single_qc_step_after_filter_rowsums <- function(sce_filter) {
-  sce_filtered %>% 
-    counts() %>% 
-    rowSums()
-}
-
 #' Apply Filtering to Single-Cell Experiment Object
 #'
 #' This function applies gene filtering to a SingleCellExperiment (SCE) object 
@@ -349,12 +328,47 @@ tar_sc_single_qc_step_apply_filter <- function(sce_sensitive_filter, sce_custom_
     sce_filter <- sce_custom_filter
   }
 
-  num_cells <- min_ratio_cells * ncol(sce_filter)
-  sce_gene_filter <- !rowSums(counts(sce_filter) >= min_umi) >= num_cells
+  # num_cells <- min_ratio_cells * ncol(sce_filter)
+  # sce_gene_filter <- !rowSums(counts(sce_filter) >= min_umi) >= num_cells
 
-  sce_filter[!sce_gene_filter, ]
+  # sce_filter[!sce_gene_filter, ]
 }
 
+#' Perform Quality Control Step After Filtering Rowsums
+#'
+#' This function calculates the row sums of the counts matrix from a 
+#' SingleCellExperiment object after filtering.
+#'
+#' @param sce_filter A `SingleCellExperiment` object that has been filtered.
+#' 
+#' @return A numeric vector containing the row sums of the counts matrix.
+#'
+#' @examples
+#' # Assuming `sce_filtered` is a filtered SingleCellExperiment object:
+#' row_sums <- tar_sc_single_qc_step_after_filter_rowsums(sce_filtered)
+#'
+#' @importFrom SingleCellExperiment counts
+#' @export
+tar_sc_single_qc_step_after_filter_rowsums <- function(sce_filter) {
+  sce_filtered %>% 
+    counts() %>% 
+    rowSums()
+}
+
+#' Create a ready SingleCellExperiment (SCE) object from a CSV file
+#'
+#' This function reads a CSV file, selects the first few rows of the data,
+#' writes the result to a new CSV file named "output.csv", and returns the
+#' filename.
+#'
+#' @param file Character. Path to the input CSV file.
+#'
+#' @return Character. The filename of the output CSV ("output.csv").
+#'
+#' @examples
+#' tar_create_ready_sce("input.csv")
+#'
+#' @export
 tar_create_ready_sce <- function(file) {
   data <- read.csv(file)
   output <- head(data)
