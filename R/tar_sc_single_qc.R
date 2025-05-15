@@ -93,40 +93,40 @@ tar_sc_single_qc <- function(
         scTargets::tar_sc_single_qc_step_remove_empty_drop(sce_raw, empty_droplets, empty_droplets_fdr_threshold),
         env = list(empty_droplets_fdr_threshold = empty_droplets_fdr_threshold)
       )
-    ),
-    tar_target_raw(
-      name = "per_cell_qc_metrics", 
-      command = substitute(
-        scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM),
-        env = list(BPPARAM = BPPARAM)
-      )
-    ),
-    tar_target_raw(
-      name = "sce_unfiltered", 
-      command = substitute(
-        scTargets::tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered),
-        env = list(replace_unfiltered = replace_unfiltered)
-      )
-    ),
-    tar_target_raw(
-      name = "sce_sensitive_filter", 
-      command = quote(
-        scTargets::tar_sc_single_qc_step_make_sensitive_filter(sce_unfiltered)
-      )
-    ),
-    tar_target_raw(
-      name = "sce_custom_filter", 
-      command = quote(
-        scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered)
-      )
-    ),
-    tar_target_raw(
-      name = "sce_filtered", 
-      command = substitute(
-        scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering),
-        env = list(save_dataset_sensitive_filtering = save_dataset_sensitive_filtering)
-      )
     )
+    # tar_target_raw(
+    #   name = "per_cell_qc_metrics", 
+    #   command = substitute(
+    #     scTargets::tar_sc_single_qc_step_cal_per_cell_qc_metrics(sce_no_empty_drop, BPPARAM),
+    #     env = list(BPPARAM = BPPARAM)
+    #   )
+    # ),
+    # tar_target_raw(
+    #   name = "sce_unfiltered", 
+    #   command = substitute(
+    #     scTargets::tar_sc_single_qc_step_create_unfiltered_sce(sce_no_empty_drop, per_cell_qc_metrics, replace_unfiltered),
+    #     env = list(replace_unfiltered = replace_unfiltered)
+    #   )
+    # ),
+    # tar_target_raw(
+    #   name = "sce_sensitive_filter", 
+    #   command = quote(
+    #     scTargets::tar_sc_single_qc_step_make_sensitive_filter(sce_unfiltered)
+    #   )
+    # ),
+    # tar_target_raw(
+    #   name = "sce_custom_filter", 
+    #   command = quote(
+    #     scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered)
+    #   )
+    # ),
+    # tar_target_raw(
+    #   name = "sce_filtered", 
+    #   command = substitute(
+    #     scTargets::tar_sc_single_qc_step_apply_filter(sce_sensitive_filter, sce_custom_filter, save_dataset_sensitive_filtering),
+    #     env = list(save_dataset_sensitive_filtering = save_dataset_sensitive_filtering)
+    #   )
+    # )
   )
 }
 
