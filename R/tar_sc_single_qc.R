@@ -113,13 +113,13 @@ tar_sc_single_qc <- function(
       command = quote(
         scTargets::tar_sc_single_qc_step_make_sensitive_filter(sce_unfiltered)
       )
+    ),
+    tar_target_raw(
+      name = "sce_custom_filter", 
+      command = quote(
+        scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered)
+      )
     )
-    # tar_target_raw(
-    #   name = "sce_custom_filter", 
-    #   command = quote(
-    #     scTargets::tar_sc_single_qc_step_make_custom_filter(sce_unfiltered)
-    #   )
-    # ),
     # tar_target_raw(
     #   name = "sce_filtered", 
     #   command = substitute(
