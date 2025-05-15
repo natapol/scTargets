@@ -349,7 +349,7 @@ tar_sc_single_qc_step_apply_filter <- function(sce_sensitive_filter, sce_custom_
 #'
 #' @importFrom SingleCellExperiment counts
 #' @export
-tar_sc_single_qc_step_after_filter_rowsums <- function(sce_filter) {
+tar_sc_single_qc_step_after_filter_rowsums <- function(sce_filtered) {
   sce_filtered %>% 
     counts() %>% 
     rowSums()
