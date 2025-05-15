@@ -355,5 +355,10 @@ tar_sc_single_qc_step_apply_filter <- function(sce_sensitive_filter, sce_custom_
   sce_filter[!sce_gene_filter, ]
 }
 
-
+tar_create_ready_sce <- function(file) {
+  data <- read.csv(file)
+  output <- head(data)
+  write.csv(output, "output.csv")
+  "output.csv"
+}
 
