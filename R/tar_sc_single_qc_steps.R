@@ -259,7 +259,7 @@ tar_sc_single_qc_step_create_unfiltered_sce <- function(sce_no_empty_drop, per_c
 #' filtered_sce <- tar_sc_single_qc_tep_make_sensitive_filter(sce)
 #'
 #' @export
-tar_sc_single_qc_tep_make_sensitive_filter <- function(sce_unfiltered) {
+tar_sc_single_qc_step_make_sensitive_filter <- function(sce_unfiltered) {
   sce_unfiltered[, !sce_unfiltered$discard_qc]
 }
 
@@ -280,7 +280,7 @@ tar_sc_single_qc_tep_make_sensitive_filter <- function(sce_unfiltered) {
 #' filtered_sce <- tar_sc_single_step_make_custom_filter(sce)
 #'
 #' @export
-tar_sc_single_step_make_custom_filter <- function(sce_unfiltered) {
+tar_sc_single_qc_step_make_custom_filter <- function(sce_unfiltered) {
   sce_unfiltered[, !sce_unfiltered$discard_custom]
 }
 
