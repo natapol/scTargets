@@ -41,11 +41,12 @@ scTarget_single_qc <- function(
     sce_raw
   }
   
-  empty_droplets <- function(sce_raw, BPPARAM) {
+  empty_droplets <- substitute(
     DropletUtils::emptyDrops(
       m = SummarizedExperiment::counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
-    )
-  }
+    ),
+    env = list(BPPARAM = BPPARAM)
+  )
   
   remove_empty_droplets <- function(sce_raw, empty_droplets, empty_droplets_fdr_threshold) {
     
@@ -68,17 +69,7 @@ scTarget_single_qc <- function(
     ),
     targets::tar_target_raw(
       name = "empty_droplets", 
-      command = substitute(
-        empty_droplets(sce_raw, BPPARAM),
-        env = list(BPPARAM = BPPARAM)
-      )
-    ),
-    targets::tar_target_raw(
-      name = "sce_no_empty_drop", 
-      command = substitute(
-        remove_empty_droplets(sce_raw, empty_droplets, empty_droplets_fdr_threshold),
-        env = list(empty_droplets_fdr_threshold = empty_droplets_fdr_threshold)
-      )
+      command = empty_droplets
     )
   )
 }
