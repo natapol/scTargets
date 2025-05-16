@@ -33,11 +33,11 @@
 #' 
 #' @export
 empty_droplets <- function(
-  sce_raw, 
+  sce, 
   BPPARAM = BiocParallel::SerialParam()
 ) {
   DropletUtils::emptyDrops(
-    m = counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
+    m = counts(sce), lower = TRUE, BPPARAM = BPPARAM
   )
 }
 
@@ -88,7 +88,7 @@ remove_empty_drop <- function(
     sce <- sce[, is_cell_index]
     sce$is_empty_fdr <- empty_droplets$FDR[is_cell_index]
   }
-  sce_raw
+  sce
 }
 
 #' Create an Unfiltered SingleCellExperiment Object with QC Metrics
