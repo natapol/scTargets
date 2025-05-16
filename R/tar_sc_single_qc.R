@@ -140,7 +140,8 @@ create_unfiltered_sce <- function(
   max_umi_cf = 50000,
   min_feature = 1000,
   max_mito_ratio = 0.2,
-  replace_unfiltered = TRUE
+  replace_unfiltered = TRUE,
+  BPPARAM = BiocParallel::SerialParam()
 ) {
   
   mito_genes <- stringr::str_which(rowData(sce)[["Symbol"]], stringr::regex("MT-", ignore_case = TRUE))
@@ -148,7 +149,8 @@ create_unfiltered_sce <- function(
   
   per_cell_qc_metrics <- scater::perCellQCMetrics(
     sce,
-    subsets = list(mito = mito_genes, ribo = ribo_genes)
+    subsets = list(mito = mito_genes, ribo = ribo_genes),
+    BPPARAM = BPPARAM
   )
   
   qc_filter <- list(

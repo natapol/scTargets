@@ -111,13 +111,13 @@ tar_sc_single_qc <- function(
       command = substitute(
         scTargets::create_unfiltered_sce(
           sce_valid_cells,
-          replace_unfiltered,
           mad_threshold,
           min_umi_cf,
           max_umi_cf,
           min_feature,
           max_mito_ratio,
-          replace_unfiltered
+          replace_unfiltered,
+          BPPARAM
         ),
         env = list(
           replace_unfiltered = replace_unfiltered, 
@@ -126,7 +126,8 @@ tar_sc_single_qc <- function(
           max_umi_cf = max_umi_cf,
           min_feature = min_feature,
           max_mito_ratio = max_mito_ratio,
-          replace_unfiltered = replace_unfiltered
+          replace_unfiltered = replace_unfiltered,
+          BPPARAM = BPPARAM
         )
       )
     ),
