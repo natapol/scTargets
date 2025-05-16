@@ -110,7 +110,7 @@ tar_sc_single_qc <- function(
       name = "sce_unfiltered", 
       command = substitute(
         scTargets::create_unfiltered_sce(
-          sce_no_empty_drop,
+          sce_valid_cells,
           replace_unfiltered,
           mad_threshold,
           min_umi_cf,
