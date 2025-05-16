@@ -43,7 +43,7 @@ scTarget_single_qc <- function(
   
   empty_droplets <- substitute(
     DropletUtils::emptyDrops(
-      m = SummarizedExperiment::counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
+      m = counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
     ),
     env = list(BPPARAM = BPPARAM)
   )
