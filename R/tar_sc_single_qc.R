@@ -236,15 +236,16 @@ apply_filter <- function(
   min_ratio_cells <- 0.01
 
   if (save_dataset_sensitive_filtering) {
-    sce_filter <- sce_unfiltered[, !sce_unfiltered$discard_qc]
+    sce_filtered <- sce_unfiltered[, !sce_unfiltered$discard_qc]
   } else {
-    sce_filter <- sce_unfiltered[, !sce_unfiltered$discard_custom]
+    sce_filtered <- sce_unfiltered[, !sce_unfiltered$discard_custom]
   }
 
-  num_cells <- min_ratio_cells * ncol(sce_filter)
-  sce_gene_filter <- !rowSums(counts(sce_filter) >= min_umi) >= num_cells
+  num_cells <- min_ratio_cells * ncol(sce_filtered)
+  sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
 
-  sce_filter[!sce_gene_filter, ]
+  sce_filtered[!sce_gene_filter, ]
+  sce_filtered
 }
 
 #' Perform Quality Control Step After Filtering Rowsums
