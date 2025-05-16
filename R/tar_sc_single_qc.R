@@ -37,7 +37,7 @@ empty_droplets <- function(
   BPPARAM = BiocParallel::SerialParam()
 ) {
   DropletUtils::emptyDrops(
-    m = SummarizedExperiment::counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
+    m = counts(sce_raw), lower = TRUE, BPPARAM = BPPARAM
   )
 }
 
