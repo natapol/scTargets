@@ -90,7 +90,7 @@ tar_sc_single_qc <- function(
     tar_target_raw("path", x10_file_path, format = "file"),
     tar_target_raw(
       name = "sce_raw", 
-      command = quote(scTargets::tar_sc_single_qc_step_read_10x_counts(path))
+      command = quote(scTargets::read_10x_counts(path))
     ),
     tar_target_raw(
       name = "empty_droplets", 
