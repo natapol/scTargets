@@ -77,6 +77,12 @@ tar_sc_single_qc <- function(
   min_ratio_cells = 0.01,
   BPPARAM = BiocParallel::SerialParam()
 ) {
+  
+  targets::tar_assert_package("DropletUtils")
+  targets::tar_assert_package("scater")
+  targets::tar_assert_package("purrr")
+  targets::tar_assert_package("tidyr")
+  targets::tar_assert_package("stringr")
 
   targets::tar_assert_path(x10_file_path, 'Input path for 10x data was not found.')
 
