@@ -1,3 +1,31 @@
+#' Read 10x Genomics Count Matrix
+#'
+#' This function reads a 10x Genomics count matrix from the specified path and
+#' returns a SingleCellExperiment object. The column names of the resulting
+#' object are set to the barcodes from the cell metadata.
+#'
+#' @param path A string specifying the path to the 10x Genomics data directory.
+#'             This directory should contain the matrix, features, and barcodes files.
+#'
+#' @return A \code{SingleCellExperiment} object containing the count matrix
+#'         and associated metadata.
+#'
+#' @importFrom DropletUtils read10xCounts
+#' @importFrom SingleCellExperiment colData
+#'
+#' @examples
+#' \dontrun{
+#'   # Example usage:
+#'   sce <- tar_sc_single_qc_step_read_10x_counts("path/to/10x/data")
+#' }
+#'
+#' @export
+read_10x_counts <- function(path) {
+  sce_raw <- DropletUtils::read10xCounts(path)
+  targets::tar_assert_expr(ncol(sce_raw) > 0)
+  colnames(sce_raw) <- colData(sce_raw)$Barcode
+  sce_raw
+}
 
 #' Read 10X Genomics Data
 #'
