@@ -118,7 +118,7 @@ tar_sc_single_qc <- function(
           min_feature,
           max_mito_ratio,
           replace_unfiltered,
-          BPPARAM = BiocParallel::SerialParam()
+          BPPARAM
         ),
         env = list(
           replace_unfiltered = replace_unfiltered, 
