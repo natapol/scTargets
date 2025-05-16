@@ -22,7 +22,9 @@
 #' @export
 read_10x_counts <- function(path) {
   sce_raw <- DropletUtils::read10xCounts(path)
-  targets::tar_assert_expr(ncol(sce_raw) > 0)
+  stopifnot(
+    ncol(sce_raw) > 0
+  )
   colnames(sce_raw) <- colData(sce_raw)$Barcode
   sce_raw
 }
