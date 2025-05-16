@@ -4,7 +4,7 @@
 \alias{tar_sc_single_qc_step_after_filter_rowsums}
 \title{Perform Quality Control Step After Filtering Rowsums}
 \usage{
-tar_sc_single_qc_step_after_filter_rowsums(sce_filter)
+tar_sc_single_qc_step_after_filter_rowsums(sce_filtered)
 }
 \arguments{
 \item{sce_filter}{A \code{SingleCellExperiment} object that has been filtered.}
