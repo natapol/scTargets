@@ -240,16 +240,11 @@ apply_filter <- function(
 
   num_cells <- min_ratio_cells * ncol(sce_filtered)
   
-  print(typeof(sce_filtered))
-  print(typeof(counts(sce_filtered)))
-  print(dim(counts(sce_filtered)))
-  print(rowSums)
   
-  MatrixGenerics::rowSums(counts(sce_filtered))
-  # sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
-  # 
-  # sce_filtered[!sce_gene_filter, ]
-  # sce_filtered
+  sce_gene_filter <- !Matrix::rowSums(counts(sce_filtered) >= min_umi) >= num_cells
+
+  sce_filtered[!sce_gene_filter, ]
+  sce_filtered
 }
 
 #' Perform Quality Control Step After Filtering Rowsums
