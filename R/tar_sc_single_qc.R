@@ -245,7 +245,7 @@ apply_filter <- function(
   print(dim(counts(sce_filtered)))
   print(rowSums)
   
-  !rowSums(counts(sce_filtered))
+  MatrixGenerics::rowSums(counts(sce_filtered))
   # sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
   # 
   # sce_filtered[!sce_gene_filter, ]
