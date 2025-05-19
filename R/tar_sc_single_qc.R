@@ -240,8 +240,9 @@ apply_filter <- function(
 
   num_cells <- min_ratio_cells * ncol(sce_filtered)
   
-  print(sce_filtered)
-  print(counts(sce_filtered))
+  print(typeof(sce_filtered))
+  print(typeof(counts(sce_filtered)))
+  print(dim(counts(sce_filtered)))
   
   !rowSums(counts(sce_filtered))
   # sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
