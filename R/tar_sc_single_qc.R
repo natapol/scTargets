@@ -239,7 +239,7 @@ apply_filter <- function(
   }
 
   num_cells <- min_ratio_cells * ncol(sce_filtered)
-  # sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
+  sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
   # 
   # sce_filtered[!sce_gene_filter, ]
   # sce_filtered
