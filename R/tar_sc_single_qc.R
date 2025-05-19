@@ -243,6 +243,7 @@ apply_filter <- function(
   print(typeof(sce_filtered))
   print(typeof(counts(sce_filtered)))
   print(dim(counts(sce_filtered)))
+  print(rowSums)
   
   !rowSums(counts(sce_filtered))
   # sce_gene_filter <- !rowSums(counts(sce_filtered) >= min_umi) >= num_cells
